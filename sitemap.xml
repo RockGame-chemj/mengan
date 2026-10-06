@@ -3,8 +3,8 @@
   <url><loc>index.html</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
   <url><loc>works.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>about.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>works/rainbow.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>works/whisper.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>works/rainbow.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>works/coffee.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>works/heart.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>works/wine.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
