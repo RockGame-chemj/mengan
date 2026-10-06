@@ -1,0 +1,268 @@
+/* ============================================================
+   祝梦安 · 个人博客  |  手机端适配层
+   ------------------------------------------------------------
+   本文件只做「窄屏修正」，不改桌面布局。
+   在 site.css 之后引入，所以这些规则优先级更高。
+
+   修的几件事：
+   1. 触控目标放大到 ≥44px（苹果/谷歌的无障碍建议值）
+   2. iPhone 刘海 / 圆角安全区适配（横屏时最容易出问题）
+   3. 长链接、长英文串不再撑破正文
+   4. 修 521~639px 这段断点空隙的挤压
+   5. 表格横滑给出视觉提示，让人知道能滑动
+   6. 手机上略微放大正文、收紧行高，提升阅读舒适度
+   ============================================================ */
+
+/* ---------- 1. 触控目标 ---------- */
+@media (max-width: 900px) {
+  /* 桌面 34px 太小，手机上手指点不准 */
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+    margin-right: -4px;      /* 视觉上不显得离边缘太远 */
+  }
+  .icon-btn svg { width: 19px; height: 19px; }
+
+  /* 导航链接加大有效点击面积，但视觉上不显得笨重 */
+  .nav a {
+    padding: .62rem .7rem;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* 章节目录条目：每行至少 44px 高，方便滑动中误触 */
+  .chapter-nav a {
+    padding: .72rem .9rem;
+    min-height: 44px;
+  }
+
+  .foot-links a,
+  .toc-list a { min-height: 44px; }
+
+  /* 按钮统一抬高到触控标准 */
+  .btn { min-height: 44px; }
+  .seg button { min-height: 36px; padding: .4rem .7rem; }
+}
+
+/* ---------- 2. 刘海 / 安全区 ---------- */
+/* 竖屏时左右的安全区（曲面屏 / 圆角），横屏时还有左右 inset */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  .site-head {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-top: env(safe-area-inset-top);
+    height: calc(var(--nav-h) + env(safe-area-inset-top));
+  }
+  .site-foot {
+    padding-bottom: calc(3rem + env(safe-area-inset-bottom));
+  }
+  /* 阅读页左右内容避开圆角 */
+  .wrap {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* ---------- 3. 长内容不再撑破布局 ---------- */
+/* 只在小屏生效：桌面端的断行规则已经在 site.css 里由容器宽度约束，不必改动 */
+@media (max-width: 639px) {
+  .reader p,
+  .prose p,
+  .excerpt p,
+  .fact dd,
+  .work-body p,
+  .novel-intro .blurb,
+  .toc-list .t {
+    overflow-wrap: break-word;
+    word-break: break-word;   /* 兼容老一些的移动端浏览器 */
+  }
+}
+
+/* ---------- 4. 修断点空隙：521~639px ---------- */
+@media (max-width: 639px) {
+  /* 两个网格都收成单列，避免左栏太窄把标题挤成竖排 */
+  .section-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .7rem;
+  }
+  .section-head p {
+    white-space: normal;      /* 关键：解除 nowrap */
+    font-size: .82rem;
+  }
+
+  .facts .fact,
+  .excerpt-side .facts .fact,
+  .reader-aside .facts .fact {
+    grid-template-columns: 72px 1fr;
+    gap: .7rem;
+  }
+
+  /* 阅读工具栏：手机上竖排换行，不出现横向滚动 */
+  .reader-toolbar {
+    gap: .4rem;
+    padding: .6rem;
+    flex-wrap: wrap;
+  }
+  .reader-toolbar .lab { font-size: .64rem; }
+  .reader-toolbar .spacer { display: none; }
+
+  /* 正文按手机宽度微调 */
+  .reader { width: 100%; }
+  .chapter + .chapter { margin-top: 2.6rem; }
+  .chapter-head { gap: .6rem; padding-bottom: .55rem; margin-bottom: 1.2rem; }
+  .chapter-head h2 { font-size: 1.04rem; }
+
+  /* 作品一览表：手机上给出「能左右滑」的提示 */
+  .table-wrap {
+    position: relative;
+    background:
+      linear-gradient(to right, var(--panel) 30%, transparent),
+      linear-gradient(to right, transparent, var(--panel) 70%) 100% 0,
+      radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.28), transparent),
+      radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.28), transparent) 100% 0;
+    background-repeat: no-repeat;
+    background-size: 42px 100%, 42px 100%, 15px 100%, 15px 100%;
+    background-attachment: local, local, scroll, scroll;
+  }
+  .index-table th,
+  .index-table td { padding: .72rem .8rem; }
+  /* 桌面要求 620px 宽，手机上横滑太费劲，收窄到 460px */
+  .index-table { min-width: 460px; }
+
+  /* 底部：三个区块用小圆点分隔一行，别各占一行 */
+  .foot-grid { gap: 1.5rem; }
+  .foot-bottom {
+    flex-direction: column;
+    gap: .45rem;
+    align-items: flex-start;
+  }
+}
+
+/* ---------- 5. 小屏进一步收紧 ---------- */
+@media (max-width: 420px) {
+  :root {
+    --nav-h: 58px;
+  }
+  /* 阅读页信息头：320~420px 上两列会太挤，改成封面 + 文字的紧凑两列，
+     但缩小封面、收掉英文名，保证中文标题有足够宽度不竖排 */
+  .novel-intro {
+    --cover-w: 88px;
+    gap: .9rem .9rem;
+  }
+  .novel-intro .en { display: none; }
+  .novel-intro h1 { font-size: 1.18rem; }
+  .novel-intro .blurb { font-size: .82rem; -webkit-line-clamp: 5; }
+  .novel-intro .blurb + .blurb { display: none; }
+  /* 首页品牌字缩小，给导航留位置 */
+  .brand b { font-size: 1.02rem; letter-spacing: .06em; }
+  .brand span { display: none; }        /* 手机上隐藏英文副标题 */
+  .nav { gap: .05rem; }
+  .nav a { padding: .55rem .6rem; font-size: .82rem; }
+
+  /* 首页主标题别太大 */
+  .hero h1 {
+    font-size: 2.3rem;
+    letter-spacing: .06em;
+    margin-bottom: .9rem;
+  }
+  .hero { padding-top: 2.8rem; }
+  .hero-lede { font-size: .97rem; line-height: 1.85; }
+
+  /* 书封堆叠在小屏上缩小，避免占满首屏 */
+  .hero-art { min-height: 240px; }
+  .art-stack { width: min(210px, 62%); }
+
+  /* 阅读页书目信息头
+     手机上改成「封面在左、文字在右」的两列布局，
+     比原来把封面居中、文字整块堆在下面更紧凑，也不会出现细长条。
+     封面宽度仍由 --cover-w 统一控制。 */
+  .novel-intro {
+    --cover-w: 108px;
+    grid-template-columns: var(--cover-w) minmax(0, 1fr);
+    gap: 1rem 1.1rem;
+    align-items: start;
+  }
+  /* 第一列放封面，第二列放文字；封面只在左列，不跨列 */
+  .novel-intro .cover { grid-column: 1; grid-row: 1; }
+  .novel-intro > div:not(.cover) { grid-column: 2; grid-row: 1; }
+  .novel-intro h1 { font-size: 1.32rem; letter-spacing: .04em; }
+  .novel-intro .en { margin-bottom: .5rem; font-size: .62rem; }
+  .novel-intro .blurb { font-size: .86rem; line-height: 1.8; margin-bottom: .7rem; }
+  /* 简介太长时在手机上限制行数，避免信息头过高把正文挤出首屏 */
+  .novel-intro .blurb { display: -webkit-box; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden; }
+  .novel-intro .blurb + .blurb { -webkit-line-clamp: 2; font-size: .8rem; }
+  .novel-intro .meta-row { justify-content: flex-start; }
+  .novel-intro .chip { font-size: .72rem; padding: .24rem .55rem; }  /* 卡片更窄时，裁切再往上一点，保证封面书名不被切掉 */
+  .work-cover img { object-position: center 28%; }
+
+  /* 分页卡片文字缩小 */
+  .pager a { padding: .85rem .95rem; }
+  .pager .v { font-size: .95rem; }
+
+  /* 底部链接单行纵向排列，间距紧凑 */
+  .foot-links { gap: .1rem 1rem; }
+  .foot-links a { min-height: 40px; display: inline-flex; align-items: center; }
+
+  /* 极窄屏：表格再收，隐藏信息量最低的两列（章节 / 阅读时长） */
+  .index-table { min-width: 340px; }
+  .index-table th,
+  .index-table td { padding: .6rem .55rem; }
+  .index-table th:nth-child(5),
+  .index-table td:nth-child(5),
+  .index-table th:nth-child(6),
+  .index-table td:nth-child(6) { display: none; }
+}
+
+/* ---------- 6. 横屏手机：高度很矮，收掉过大留白 ---------- */
+@media (max-height: 480px) and (orientation: landscape) {
+  .hero { padding-top: 2rem; padding-bottom: 1.6rem; }
+  .hero-art { display: none; }          /* 横屏矮屏不浪费首屏在装饰上 */
+  .section { padding: 1.8rem 0; }
+  .reader-toolbar { position: static; }
+}
+
+/* ---------- 7. 触摸设备：去掉 hover 造成的"卡住"状态 ---------- */
+@media (hover: none) {
+  /* 手机上 hover 生效后不会消失，会让卡片一直处于抬起状态 */
+  .work:hover,
+  .pager a:hover,
+  .btn:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  .work:hover .work-cover img { transform: none; }
+  /* 用按压反馈代替 hover 反馈 */
+  .work:active { transform: scale(.985); }
+  .btn:active { transform: scale(.97); opacity: .9; }
+  .chapter-nav a:active { background: var(--accent-soft); }
+  .icon-btn:active { transform: scale(.92); }
+}
+
+/* ---------- 8. 手机上正文默认字号略大、行距更紧凑 ---------- */
+@media (max-width: 639px) {
+  .reader[data-lh="normal"] { --lh-read: 1.92; }
+  .reader[data-lh="loose"]  { --lh-read: 2.18; }
+  .reader[data-fs="m"]      { --fs-read: 1.078rem; }
+  /* 段落首行缩进在窄屏上略减，避免每行只剩几个字 */
+  .reader p { text-indent: 1.8em; }
+}
+
+/* ---------- 9. 减少动画（尊重系统设置，省电） ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .work, .btn, .pager a, .work-cover img, .icon-btn {
+    transition: none !important;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
+
+/* ---------- 10. 手机端打印/存 PDF 时去掉多余留白 ---------- */
+@media print {
+  body { padding: 0 !important; }
+  .site-head { padding: 0 !important; height: auto !important; }
+}
